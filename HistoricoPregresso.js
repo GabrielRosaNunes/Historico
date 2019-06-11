@@ -3,10 +3,10 @@
         cirurgia: sim ou nÃ£o
         data-cirurgia: {
             {
-                mes/ano:
-                doenÃ§a:
-                cirurgia:
-                mÃ©dico
+                mes/ano: 
+                doenÃ§a: texto
+                cirurgia: texto
+                mÃ©dico: texto
             }
         }
         internado: sim ou nÃ£o
@@ -16,8 +16,9 @@
 */
 
 class HistoricoPregresso {
-    constructor(data) {
+    constructor(data,db) {
         this.data = data;
+        this.db = db;
     }
     include() {
         dataArray = [this.validCirur(),
@@ -35,10 +36,10 @@ class HistoricoPregresso {
 
     validCirur(data) {
         if (typeof data == "String") {
-            if (data.toLowerCase() == "sim" || data.toLowerCase() == "não") {
+            if (data.toLowerCase() == "sim" || data.toLowerCase() == "nï¿½o") {
                 return true;
             } else {
-                return "A string precisa ser sim ou não";
+                return "A string precisa ser sim ou nao";
             }
         } else {
             return "a cirurgia precisa ser uma string";
@@ -49,13 +50,13 @@ class HistoricoPregresso {
     }
     internado(data) {
         if (typeof data == "String") {
-            if (data.toLowerCase() == "sim" || data.toLowerCase() == "não") {
+            if (data.toLowerCase() == "sim" || data.toLowerCase() == "nao") {
                 return true;
             } else {
-                return "O dado de internação precisa ser sim ou não";
+                return "O dado de internacaoo precisa ser sim ou nao";
             }
         } else {
-            return "a internação precisa ser uma string";
+            return "a internacao precisa ser uma string";
         }
     }
 
@@ -68,19 +69,28 @@ class HistoricoPregresso {
     }
 
     insertData(data) {
-        db.query("INSERT INTO XXXX (CAMPO1,CAMPO2) VALUES (1,2)");
+        this.db.query("INSERT INTO XXXX (CAMPO1,CAMPO2) VALUES (1,2)",(err,response)=>{
+            if (err) throw err;
+        });
         return true;
     }
     getData(campos,where,orderby,groups) {
-        result = db.query(`SELECT ${campos} FROM TABLENAME WHERE ${where} ORDER BY ${orderby} GROUP BY ${groups}`);
-        return result;
+        result = this.db.query(`SELECT ${campos} FROM TABLENAME WHERE ${where} ORDER BY ${orderby} GROUP BY ${groups}`,(err,response)=>{
+            if (err) throw err;
+            this.responseGetData = response;
+        });
+        return this.responseGetData;
     }
     remove(where) {
-        db.query(`DELETE FROM TABLENAME WHERE ${where}`);
+        this.db.query(`DELETE FROM TABLENAME WHERE ${where}`,(err,response) => {
+            if (err) throw err;
+        });
         return true;
     }
     update(set,where) {
-        db.query(`UPDATE SET ${set} WHERE ${where}`);
+        this.db.query(`UPDATE SET ${set} WHERE ${where}`,(err,response)=>{
+            if (err) throw err;
+        });
         return true;
     }
 }

@@ -12,8 +12,9 @@
 
 class HistoricoAtual {
     
-    constructor(data) {
+    constructor(data,db) {
         this.data = data;
+        this.db = db;
     }
 
     include() {
@@ -41,62 +42,62 @@ class HistoricoAtual {
         if (typeof data == "number") {
             return true;
         } else {
-            return "a idade precisa ser um número";
+            return "a idade precisa ser um numero";
         }
     }
     validPeso(data) {
         if (typeof data == "number") {
             return true;
         } else {
-            return "o peso precisa ser um número";
+            return "o peso precisa ser um numero";
         }
     }
     validEstatura(data) {
         if (typeof data == "number") {
             return true;
         } else {
-            return "a estatura precisa ser um número";
+            return "a estatura precisa ser um numero";
         }
     }
     validSaude(data) {
         if (typeof data == "String") {
-            if (data.toLowerCase() == "sim" || data.toLowerCase() == "não") {
+            if (data.toLowerCase() == "sim" || data.toLowerCase() == "nï¿½o") {
                 return true;
             } else {
-                return "A string precisa ser sim ou não";
+                return "A string precisa ser sim ou nao";
             }
         } else {
-            return "a saúde precisa ser uma string";
+            return "a saude precisa ser uma string";
         }
     }
     validMudMeses(data) {
         if (typeof data == "String") {
-            if (data.toLowerCase() == "sim" || data.toLowerCase() == "não") {
+            if (data.toLowerCase() == "sim" || data.toLowerCase() == "nï¿½o") {
                 return true;
             } else {
-                return "A string precisa ser sim ou não";
+                return "A string precisa ser sim ou nao";
             }
         } else {
-            return "a saúde precisa ser uma string";
+            return "a saude precisa ser uma string";
         }
     }
 
     validTratMedico(data) {
         if (typeof data == "String") {
-            if (data.toLowerCase() == "sim" || data.toLowerCase() == "não") {
+            if (data.toLowerCase() == "sim" || data.toLowerCase() == "nï¿½o") {
                 return true;
             } else {
-                return "A string precisa ser sim ou não";
+                return "A string precisa ser sim ou nao";
             }
         } else {
-            return "a saúde precisa ser uma string";
+            return "a saude precisa ser uma string";
         }
     }
     validDataUlt(data) {
         if (data instanceof Date) {
             return true;
         } else {
-            return "A data da última consulta precisa ser do tipo data";
+            return "A data da ultima consulta precisa ser do tipo data";
         }
     }
     validMotivo(data) {
@@ -110,30 +111,46 @@ class HistoricoAtual {
         if (typeof data == "String") {
             return true;
         } else {
-            return "o contato médico precisa estar em string";
+            return "o contato medico precisa estar em string";
         }
     }
     validMedicacao(data) {
         if (typeof data == "String") {
             return true;
         } else {
-            return "a descrição da medicação precisa estar em string";
+            return "a descriï¿½ï¿½o da medicaï¿½ï¿½o precisa estar em string";
         }
     }
     insertData(data) {
-        db.query("INSERT INTO XXXX (CAMPO1,CAMPO2) VALUES (1,2)");
+        this.db.query("INSERT INTO XXXX (CAMPO1,CAMPO2) VALUES (1,2)",(err,response)=>{
+            if (err) throw err;
+        });
         return true;
     }
     getData(campos,where,orderby,groups) {
-        result = db.query(`SELECT ${campos} FROM TABLENAME WHERE ${where} ORDER BY ${orderby} GROUP BY ${groups}`);
-        return result;
+        var result = this.db.query(`SELECT ${campos} FROM TABLENAME WHERE ${where} ORDER BY ${orderby} GROUP BY ${groups}`,(err,response)=>{
+            if (err) throw err;
+            this.responseGetAllData = response;
+        });
+        return this.responseGetAllData;
+    }
+    getById(id) {
+        result = db.query(`SELECT * FROM where id=${id}`,(err,response)=>{
+            if (err) throw err;
+            this.responseGetById = response;
+        });
+        return this.responseGetById;
     }
     remove(where) {
-        db.query(`DELETE FROM TABLENAME WHERE ${where}`);
+        this.db.query(`DELETE FROM TABLENAME WHERE ${where}`,(err,response) =>{
+            if (err) throw err;
+        });
         return true;
     }
     update(set,where) {
-        db.query(`UPDATE SET ${set} WHERE ${where}`);
+        this.db.query(`UPDATE SET ${set} WHERE ${where}`,(err,response) =>{
+            if (err) throw err;
+        });
         return true;
     }
 }

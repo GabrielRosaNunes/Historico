@@ -65,55 +65,67 @@ app.use(BodyParser.urlencoded({
 
 /* Histórico Médico Atual - Rotas */
 
+app.get('/historico-atual/all/',(req,res)=>{
+    var getHist = new HistoricoAtual(req.body,db);
+    response = getHist.getData();
+    res.send('foi buscado');
+});
+
 app.get('/historico-atual/',(req,res)=>{
-    getHist = new HistoricoAtual(req.body);
-    response = gethist.getData();
+    var getHist = new HistoricoAtual(req.body,db);
+    response = getHist.getById();
     res.send(response);
 });
+
 app.post('/historico-atual/',(req,res)=>{
-    postHistAtual = new HistoricoAtual(req.body);
+    var postHistAtual = new HistoricoAtual(req.body,db);
     response = postHistAtual.include();
     res.send(response);
 })
 
 app.put('/historico-atual/',(req,res)=>{
-    getHist = new HistoricoPregresso(req.body);
-    response = gethist.update();
+    var getHist = new HistoricoAtual(req.body,db);
+    response = getHist.update();
     res.send(response);
 });
 
 app.delete('/historico-atual/',(req,res)=>{
-    getHist = new HistoricoPregresso(req.body);
-    response = gethist.delete();
+    var getHist = new HistoricoAtual(req.body,db);
+    response = getHist.delete();
     res.send(response);
 });
-
+app.get('/',(req,res)=>{
+    res.send("Digite uma das rotas dos históricos")
+})
 /* Histórico Médico Pregresso - Rotas*/
 
-
+app.get('/historico-pregresso/all/',(req,res)=>{
+    var getHist = new HistoricoPregresso(req.body,db);
+    response = getHist.getData();
+})
 app.get('/historico-pregresso/',(req,res)=>{
-    getHist = new HistoricoPregresso(req.body);
-    response = gethist.getData();
+    var getHist = new HistoricoPregresso(req.body,db);
+    response = getHist.getById();
     res.send(response);
 });
 app.post('/historico-pregresso/',(req,res)=>{
-    getHist = new HistoricoPregresso(req.body);
-    response = gethist.include();
+    var getHist = new HistoricoPregresso(req.body,db);
+    response = getHist.include();
     res.send(response);
 })
 
 app.put('/historico-pregresso/',(req,res)=>{
-    getHist = new HistoricoPregresso(req.body);
-    response = gethist.update();
+    var getHist = new HistoricoPregresso(req.body,db);
+    response = getHist.update();
     res.send(response);
 });
 
 app.delete('/historico-pregresso/',(req,res)=>{
-    getHist = new HistoricoPregresso(req.body);
-    response = gethist.delete();
+    var getHist = new HistoricoPregresso(req.body,db);
+    response = getHist.delete();
     res.send(response);
 })
 
 app.listen(8080, () => {
-    console.log('foi o servers');
+    console.log('O server esta rodando na porta 8080');
 })
