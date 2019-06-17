@@ -18,7 +18,7 @@ class HistoricoAtual {
     }
 
     include() {
-        var dataArray = [
+        var dataArray = [this.validId(this.data.idPaciente),
             this.validIdade(this.data.idade),
             this.validPeso(this.data.peso),
             this.validEstatura(this.data.estatura),
@@ -66,6 +66,13 @@ class HistoricoAtual {
             return true;
         } else {
             return "a estatura precisa ser um numero";
+        }
+    }
+    validId(id) {
+        if (typeof id != "number") {
+            return "o id precisa ser do tipo numero";
+        } else {
+            return true;
         }
     }
     validSaude(data) {
@@ -174,6 +181,10 @@ class HistoricoAtual {
             campos += 'medicacao';
             values += '"'+this.data.medicacao+'"';
         }
+        if (this.data.idPaciente != '' && this.data.idPaciente != undefined) {
+            campos += 'id_paciente';
+            values += this.data.idPaciente
+        }
 
         return this.model.insert(campos,values);
     }
@@ -183,11 +194,11 @@ class HistoricoAtual {
     }
 
     getAllById() {
-        this.data.id = parseInt(this.data.id);
-        if (this.data.id != undefined && this.data.id != null && this.data.id != NaN && typeof this.data.id == "number") {
-            return this.model.getAll('*','id='+this.data.id);
+        this.data.idPaciente = parseInt(this.data.idPaciente);
+        if (this.data.idPaciente != undefined && this.data.idPaciente != null && this.data.idPaciente != NaN && typeof this.data.idPaciente == "number") {
+            return this.model.getAll('*','id_paciente='+this.data.idPaciente);
         } else {
-            return "o id deve estar preenchido e ser um número";
+            return "o campo idPaciente deve estar preenchido e ser um número";
         }
     }
 
@@ -204,7 +215,8 @@ class HistoricoAtual {
                            [this.validDataUlt(dataUpdate.datUlt),dataUpdate.datUlt,'data_consulta'],
                            [this.validMotivo(dataUpdate.motivo),dataUpdate.motivo,'motivo'],
                            [this.validContMedico(dataUpdate.contMedico),dataUpdate.contMedico,'contato'],
-                           [this.validMedicacao(dataUpdate.medicacao),dataUpdate.medicacao,'medicacao']];
+                           [this.validMedicacao(dataUpdate.medicacao),dataUpdate.medicacao,'medicacao'],
+                           [this.validId(dataUpdate.idPaciente),dataUpdate.idPaciente,'id_paciente']];
         var response = this.validAll(validValues);
         
         this.dataUpdate.forEach((element) => {
@@ -237,11 +249,11 @@ class HistoricoAtual {
     }
 
     remove() {
-        if (this.data.id != undefined && this.data.id != null && this.data.id != NaN && typeof this.data.id == 'number') {
-            this.model.remove('id='+this.data.id);
+        if (this.data.idPaciente != undefined && this.data.idPaciente != null && this.data.idPaciente != NaN && typeof this.data.idPaciente == 'number') {
+            this.model.remove('id_paciente='+this.data.idPaciente);
             return true;
         } else {
-            return "o id deve estar preenchido e ser um número";
+            return "o campo idPaciente deve estar preenchido e ser um número";
         }
     }
 }
