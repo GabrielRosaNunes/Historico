@@ -21,6 +21,7 @@ class HistoricoPregresso {
         this.model = new Mysql('remotemysql.com','SnzXxLqqun','mcvjZM2PZI','SnzXxLqqun','historico_pregresso');
     }
     include() {
+        console.log(this.data);
         var dataArray = [,this.validId(this.data.idPaciente),
                     this.validCirur(this.data.cirurgia),
                     this.internado(this.data.internado),]

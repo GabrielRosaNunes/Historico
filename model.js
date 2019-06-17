@@ -57,7 +57,7 @@ class Model {
 			if (err) console.log(err);
 			this.responseInsert = response;
 		})
-		return this.responseInsert;
+		return true;
 	}
 
 	update(set,where) {

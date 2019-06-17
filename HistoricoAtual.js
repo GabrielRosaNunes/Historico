@@ -69,7 +69,7 @@ class HistoricoAtual {
         }
     }
     validId(id) {
-        if (typeof id != "number") {
+        if (typeof id !== "number") {
             return "o id precisa ser do tipo numero";
         } else {
             return true;
@@ -110,7 +110,7 @@ class HistoricoAtual {
         }
     }
     validDataUlt(data) {
-        if (typeof data == "string") {
+        if (typeof data == "number") {
             return true;
         } else {
             return "A data da ultima consulta precisa ser do tipo data";
@@ -178,8 +178,8 @@ class HistoricoAtual {
             values += '"'+this.data.contMedico+'",';
         }
         if (this.data.medicacao != '' && this.data.medicacao != undefined) {
-            campos += 'medicacao';
-            values += '"'+this.data.medicacao+'"';
+            campos += 'medicacao,';
+            values += '"'+this.data.medicacao+'",';
         }
         if (this.data.idPaciente != '' && this.data.idPaciente != undefined) {
             campos += 'id_paciente';
@@ -218,11 +218,17 @@ class HistoricoAtual {
                            [this.validMedicacao(dataUpdate.medicacao),dataUpdate.medicacao,'medicacao'],
                            [this.validId(dataUpdate.idPaciente),dataUpdate.idPaciente,'id_paciente']];
         var response = this.validAll(validValues);
-        
+        if (response !== true) {
+            return response;
+        }
         this.dataUpdate.forEach((element) => {
-            set = element[0]+"='"+element[1]+"'";
+            if (set == '') {
+                set += element[0]+"='"+element[1]+"'";
+            } else {
+                set += ","+element[0]+"='"+element[1]+"'";
+            }
         })
-
+        console.log(set);
         if (dataUpdate.id != null && typeof dataUpdate.id == 'number') {
             this.model.update(set,'id='+dataUpdate.id);
         }
@@ -231,6 +237,7 @@ class HistoricoAtual {
 
     validAll(data) {
         data.forEach((element) => {
+            console.log(element);
             if (this.boolErrorValidAll === true ) {return;}
             if (element[1] != undefined && element[1] != null && element[1] != NaN) {
                 if (element[0] === true) {
@@ -249,7 +256,8 @@ class HistoricoAtual {
     }
 
     remove() {
-        if (this.data.idPaciente != undefined && this.data.idPaciente != null && this.data.idPaciente != NaN && typeof this.data.idPaciente == 'number') {
+        console.log(this.data.idPaciente);
+        if (typeof this.data.idPaciente == 'number') {
             this.model.remove('id_paciente='+this.data.idPaciente);
             return true;
         } else {
@@ -266,4 +274,5 @@ this.validTratMedico(this.data.tratMedico),
 this.validDataUlt(this.data.datUlt),
 this.validContMedico(this.data.contMedico),
 this.validMedicacao(this.data.medicacao)*/
+
 module.exports = HistoricoAtual;

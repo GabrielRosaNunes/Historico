@@ -103,12 +103,13 @@ app.get('/historico-pregresso/all/',(req,res)=>{
     var response = getHist.getData();
 })
 app.get('/historico-pregresso/',(req,res)=>{
-    var getHist = new HistoricoPregresso(req.body,db);
+    var getHist = new HistoricoPregresso(req.body);
     var response = getHist.getById();
     res.send(response);
 });
 app.post('/historico-pregresso/',(req,res)=>{
     var getHist = new HistoricoPregresso(req.body);
+    console.log(req.body);
     var response = getHist.include();
     res.send(response);
 })
