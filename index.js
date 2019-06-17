@@ -3,13 +3,6 @@ const app = Express();
 const BodyParser = require('body-parser');
 const HistoricoAtual = require('./HistoricoAtual');
 const HistoricoPregresso = require('./HistoricoPregresso');
-const Mysql = require('mysql');
-var db = Mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: '',
-    database: 'teste'
-})
 
 app.use(BodyParser.json());
 app.use(BodyParser.urlencoded({
@@ -66,32 +59,38 @@ app.use(BodyParser.urlencoded({
 /* Histórico Médico Atual - Rotas */
 
 app.get('/historico-atual/all/',(req,res)=>{
-    var getHist = new HistoricoAtual(req.body,db);
-    response = getHist.getData();
-    res.send('foi buscado');
+    var getHist = new HistoricoAtual(req.body);
+    var response = getHist.getAll();
+    response[1].query(response[0],(err,response) =>{
+        res.send(response);
+    })
 });
 
 app.get('/historico-atual/',(req,res)=>{
-    var getHist = new HistoricoAtual(req.body,db);
-    response = getHist.getById();
-    res.send(response);
+    console.log(req.query.id);
+    var getHist = new HistoricoAtual(req.query);
+    var response = getHist.getAllById();
+    console.log(response);
+    response[1].query(response[0],(err,response) =>{
+        res.send(response);
+    })
 });
 
 app.post('/historico-atual/',(req,res)=>{
-    var postHistAtual = new HistoricoAtual(req.body,db);
-    response = postHistAtual.include();
+    var postHistAtual = new HistoricoAtual(req.body);
+    var response = postHistAtual.include();
     res.send(response);
 })
 
 app.put('/historico-atual/',(req,res)=>{
-    var getHist = new HistoricoAtual(req.body,db);
-    response = getHist.update();
+    var getHist = new HistoricoAtual(req.body);
+    var response = getHist.update();
     res.send(response);
 });
 
 app.delete('/historico-atual/',(req,res)=>{
-    var getHist = new HistoricoAtual(req.body,db);
-    response = getHist.delete();
+    var getHist = new HistoricoAtual(req.body);
+    var response = getHist.remove();
     res.send(response);
 });
 app.get('/',(req,res)=>{
@@ -100,29 +99,29 @@ app.get('/',(req,res)=>{
 /* Histórico Médico Pregresso - Rotas*/
 
 app.get('/historico-pregresso/all/',(req,res)=>{
-    var getHist = new HistoricoPregresso(req.body,db);
-    response = getHist.getData();
+    var getHist = new HistoricoPregresso(req.body);
+    var response = getHist.getData();
 })
 app.get('/historico-pregresso/',(req,res)=>{
     var getHist = new HistoricoPregresso(req.body,db);
-    response = getHist.getById();
+    var response = getHist.getById();
     res.send(response);
 });
 app.post('/historico-pregresso/',(req,res)=>{
-    var getHist = new HistoricoPregresso(req.body,db);
-    response = getHist.include();
+    var getHist = new HistoricoPregresso(req.body);
+    var response = getHist.include();
     res.send(response);
 })
 
 app.put('/historico-pregresso/',(req,res)=>{
-    var getHist = new HistoricoPregresso(req.body,db);
-    response = getHist.update();
+    var getHist = new HistoricoPregresso(req.body);
+    var response = getHist.update();
     res.send(response);
 });
 
 app.delete('/historico-pregresso/',(req,res)=>{
-    var getHist = new HistoricoPregresso(req.body,db);
-    response = getHist.delete();
+    var getHist = new HistoricoPregresso(req.body);
+    var response = getHist.delete();
     res.send(response);
 })
 

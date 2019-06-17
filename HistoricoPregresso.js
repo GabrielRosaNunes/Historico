@@ -14,28 +14,42 @@
 
     }
 */
-
+const Mysql = require('./model');
 class HistoricoPregresso {
-    constructor(data,db) {
+    constructor(data) {
         this.data = data;
-        this.db = db;
+        this.model = new Mysql('remotemysql.com','SnzXxLqqun','mcvjZM2PZI','SnzXxLqqun','historico_pregresso');
     }
     include() {
-        dataArray = [this.validCirur(),
-                    this.validDatCirur(),
-                    this.internado(),
-                    this.textInternado()]
-        dataArray.forEach(element => {
-            if (element !== true) {
-                return element;
+        var dataArray = [this.validCirur(this.data.cirurgia),
+                    this.internado(this.data.internado),]
+        if (this.data.cirurgia = "sim") {
+            dataArray.push(this.validDatCirur(this.data.datCirur));
+        }
+        if (this.data.internado = "sim") {
+            dataArray.push(this.textInternado(this.data.textInternado));
+        }
+
+        dataArray.forEach((element) => {
+            if (this.loopStop === true) {
+                return;
+            };
+            if (typeof element != 'boolean' && element != true) {
+                this.responseValid = element;
+                this.loopStop = true;
+                return;
             }
+            return;
         });
-        this.insertData();
-        return;
+        if (typeof this.responseValid != 'boolean' && this.responseValid != true &&  this.responseValid!= undefined) {
+            return this.responseValid;
+        }
+        var response = this.insertData();
+        return response;
     }
 
     validCirur(data) {
-        if (typeof data == "String") {
+        if (typeof data == "string") {
             if (data.toLowerCase() == "sim" || data.toLowerCase() == "n�o") {
                 return true;
             } else {
@@ -46,10 +60,43 @@ class HistoricoPregresso {
         }
     }
     validDatCirur(data) {
-        
+        data.forEach((element) => {
+            if (this.boolErrorCirur) return;
+            if (data.mes <= 0 && data.mes >= 13) {
+                console.log(data.mes);
+                this.boolErrorCirur = true;
+                this.textErrorCirur = 'O mes precisa estar entre 1 e 12';
+                return
+            }
+            if (typeof data.ano != 'number') {
+                this.textErrorCirur = 'O ano precisa ser um número'
+                this.boolErrorCirur = true;
+                return
+            }
+            if (typeof data.doenca != 'string') {
+                this.textErrorCirur = 'A doenca precisa ser um texto';
+                this.boolErrorCirur = true;
+                return;
+            }
+            if (typeof data.cirurgia != 'string') {
+                this.textErrorCirur = 'A cirurgia precisa ser um texto';
+                this.boolErrorCirur = true;
+                return;
+            }
+            if (typeof data.medico != 'string') {
+                this.textErrorCirur = 'O nome do medico precisa ser um texto';
+                this.boolErrorCirur = true;
+                return
+            }
+        })
+        if (this.boolErrorCirur != true) {
+            return this.textErrorCirur;
+        } else {
+            return true;
+        }
     }
     internado(data) {
-        if (typeof data == "String") {
+        if (typeof data == "string") {
             if (data.toLowerCase() == "sim" || data.toLowerCase() == "nao") {
                 return true;
             } else {
@@ -61,36 +108,64 @@ class HistoricoPregresso {
     }
 
     textInternado(data) {
-        if (typeof data == "String") {
+        if (typeof data == "string") {
             return true;
         } else {
             return "o textoInternado precisa estar em string";
         }
     }
+    insertData() {
+        var columns = '';
+        var values = '';
+        if (this.data.cirurgia != '' && this.data.cirurgia != undefined) {
+            columns += 'cirurgia,';
+            values += '"'+this.data.cirurgia+'",';
+        } 
+        if (this.data.internado != '' && this.data.internado != undefined) {
+            columns += 'internado,';
+            values += '"'+this.data.internado+'",';
+        }
+        if (this.data.textInternado != '' && this.data.internado != undefined) {
+            columns += 'text_internado';
+            values += '"'+this.data.textInternado+'"';
+        }
 
-    insertData(data) {
-        this.db.query("INSERT INTO XXXX (CAMPO1,CAMPO2) VALUES (1,2)",(err,response)=>{
-            if (err) throw err;
-        });
+        this.model.insert(columns,values);
+        this.model.endConnection();
+        var newModel = new Mysql('remotemysql.com','SnzXxLqqun','mcvjZM2PZI','SnzXxLqqun','historico_pregresso_data_cirurgia');
+        if (this.data.cirurgia == "sim") {
+            this.data.datCirur.forEach((element) =>{
+                var columnsDatCirur = `mes,ano,doenca,cirurgia,medico`;
+                var valuesDatCirur = `${element.mes},${element.ano},"${element.doenca}","${element.cirurgia}","${element.medico}"`;
+                newModel.insert(columnsDatCirur,valuesDatCirur);
+            })
+        }
         return true;
     }
-    getData(campos,where,orderby,groups) {
-        result = this.db.query(`SELECT ${campos} FROM TABLENAME WHERE ${where} ORDER BY ${orderby} GROUP BY ${groups}`,(err,response)=>{
-            if (err) throw err;
-            this.responseGetData = response;
-        });
-        return this.responseGetData;
-    }
-    remove(where) {
-        this.db.query(`DELETE FROM TABLENAME WHERE ${where}`,(err,response) => {
-            if (err) throw err;
-        });
-        return true;
-    }
-    update(set,where) {
-        this.db.query(`UPDATE SET ${set} WHERE ${where}`,(err,response)=>{
-            if (err) throw err;
-        });
+    update() {
+        var set = '';
+        var arraySet = [];
+        if (this.data.cirurgia != '' && this.data.cirurgia != undefined) {
+            arraySet.push('cirurgia="'+this.data.cirurgia+'"');
+        }
+        if (this.data.internado != '' && this.data.internado != undefined) {
+            arraySet.push('internado="'+this.data.internado+'"');
+        }
+        if (this.data.textInternado != '' && this.data.textInternado != undefined) {
+            arraySet.push('text_internado="'+this.data.textInternado+'"');
+        }
+        arraySet.forEach((element) => {
+            if (set == '') {
+                set += element;
+            } else {
+                set += ","+element;
+            }
+        })
+
+        if (this.data.id != null && this.data.id != undefined && typeof this.data.id == "number") {
+            this.model.update(set,"id="+this.data.id);
+        } 
+
         return true;
     }
 }
